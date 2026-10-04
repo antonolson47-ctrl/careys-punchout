@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Carey's Punchout</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#14061f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Punchout">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="Carey's Punchout - an irreverent 8-bit style boxing and kickboxing game.">
+<!--PWA-LINKS-->
+<style>
+html,body{margin:0;height:100%;background:#0b0412;overflow:hidden;color:#fff;font-family:'Arial Black','Trebuchet MS',Verdana,Arial,sans-serif;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;touch-action:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{position:fixed;inset:0}
+:root{--fs:16px;--b:64px;--gap:8px;--cvB:100vh}
+#cv{position:absolute;left:0;top:0;image-rendering:pixelated;image-rendering:crisp-edges;image-rendering:-moz-crisp-edges;-ms-interpolation-mode:nearest-neighbor;touch-action:none;display:block;background:#000}
+#bub{position:absolute;display:none;max-width:44vw;background:#fff;color:#111;border:3px solid #111;border-radius:12px;padding:5px 9px;font:900 calc(var(--fs)*0.9)/1.15 'Arial Black','Trebuchet MS',Arial,sans-serif;box-shadow:3px 3px 0 #000;pointer-events:none;z-index:8;text-transform:none;transform:translate(-50%,-100%)}
+#bub:after{content:'';position:absolute;left:50%;bottom:-11px;margin-left:-8px;border:8px solid transparent;border-top:9px solid #111;border-bottom:0}
+#bub.tl{transform:translate(0,-100%)}
+#bub.tl:after{left:18px}
+#ui{position:fixed;inset:0;pointer-events:none;z-index:20}
+#ui > *{pointer-events:auto}
+.sheet{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 8px);width:min(94vw,720px);max-height:var(--shH,48vh);box-sizing:border-box;background:rgba(18,6,32,.93);border:4px solid #ffd23f;border-radius:14px;box-shadow:0 6px 0 #000,0 0 30px rgba(0,0,0,.7);padding:10px 14px 8px;font-size:var(--fs);line-height:1.25;display:flex;flex-direction:column;animation:pop .22s ease-out}
+.sheet.center{bottom:auto;top:50%;transform:translate(-50%,-50%);max-height:92vh}
+.sheet .scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;min-height:0;flex:1 1 auto}
+@keyframes pop{from{opacity:0;transform:translateX(-50%) scale(.92)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+.sheet.center{animation:popc .22s ease-out}
+@keyframes popc{from{opacity:0;transform:translate(-50%,-50%) scale(.92)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.sheet h2{margin:0 0 4px;font-size:calc(var(--fs)*1.25);color:#ffd23f;text-shadow:2px 2px 0 #7a0b2e;letter-spacing:1px}
+.sheet h3{margin:6px 0 2px;font-size:var(--fs);color:#7ef0ff}
+.sheet p{margin:4px 0}
+.who{color:#ffd23f;text-shadow:1px 1px 0 #000}
+.who.c{color:#ff7ac8}.who.r{color:#9be7ff}.who.b{color:#ffb84d}.who.o{color:#ff6b6b}.who.t{color:#b9ff7a}.who.a{color:#e0c3ff}
+.line{font-family:'Trebuchet MS',Verdana,Arial,sans-serif;font-weight:bold;font-size:calc(var(--fs)*1.02);min-height:2.6em}
+.small{font-size:calc(var(--fs)*.74);color:#cdb8e8;font-family:'Trebuchet MS',Verdana,Arial,sans-serif}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+button.btn{font:900 calc(var(--fs)*0.98) 'Arial Black','Trebuchet MS',Arial,sans-serif;background:#ffd23f;color:#2a0838;border:3px solid #000;border-radius:10px;padding:8px 14px;min-height:48px;min-width:48px;cursor:pointer;box-shadow:0 4px 0 #7a0b2e;letter-spacing:.5px;touch-action:manipulation}
+button.btn:hover,button.btn.sel{background:#fff07a}
+button.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7a0b2e}
+button.btn.red{background:#ff3b5c;color:#fff;text-shadow:1px 1px 0 #000}
+button.btn.blue{background:#3bc6ff}
+button.btn.dim{background:#9a86b5}
+button.btn:disabled{opacity:.4}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-family:'Trebuchet MS',Verdana,Arial,sans-serif;font-size:calc(var(--fs)*.86)}
+.kv b{color:#ffd23f;white-space:nowrap}
+.key{display:inline-block;background:#ffd23f;color:#2a0838;border-radius:4px;padding:0 5px;margin:1px;font:900 calc(var(--fs)*.75) 'Arial Black',Arial,sans-serif;border-bottom:2px solid #7a0b2e}
+.sl{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:calc(var(--fs)*.9)}
+.sl span:first-child{min-width:5.5em}
+.sl input[type=range]{flex:1;height:36px;accent-color:#ffd23f;touch-action:none}
+.sl .v{min-width:3em;text-align:right;color:#ffd23f}
+.tog{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:calc(var(--fs)*.9)}
+.cards{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.judge{background:#fff8de;color:#222;border:3px solid #000;border-radius:8px;padding:5px 10px;font:bold calc(var(--fs)*.85) 'Courier New',monospace;transform:rotate(-1.5deg)}
+.judge:nth-child(2){transform:rotate(1.2deg)}
+.judge b{font-size:1.2em}
+.tap{animation:blink 1s steps(2) infinite;color:#7ef0ff;font-size:calc(var(--fs)*.8);text-align:right}
+@keyframes blink{50%{opacity:.25}}
+/* ---------- top buttons ---------- */
+.topb{position:fixed;z-index:30;width:48px;height:48px;border-radius:12px;border:3px solid #ffd23f;background:rgba(20,6,34,.72);color:#ffd23f;font:900 20px 'Arial Black',Arial,sans-serif;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;touch-action:none;box-shadow:0 3px 0 #000}
+.topb:active{background:#ffd23f;color:#2a0838}
+.topb.hide{display:none}
+/* ---------- touch controls ---------- */
+#tc{position:fixed;inset:0;pointer-events:none;z-index:15;display:none}
+body.touch #tc.on{display:block}
+.cl{position:absolute;display:grid;grid-template-columns:repeat(2,var(--b));grid-auto-rows:var(--b);gap:var(--gap)}
+.tb{pointer-events:auto;touch-action:none;box-sizing:border-box;border-radius:16px;border:3px solid rgba(255,210,63,.95);background:rgba(25,8,40,.5);color:#fff;font:900 calc(var(--b)*.17) 'Arial Black','Trebuchet MS',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.02;text-shadow:1px 1px 0 #000,-1px -1px 0 #000;box-shadow:0 3px 0 rgba(0,0,0,.6);transition:transform .05s,background .05s;cursor:pointer;padding:0 2px;overflow:hidden}
+.tb i{font-style:normal;font-size:calc(var(--b)*.34);line-height:1}
+.tb.k{border-color:rgba(126,240,255,.95)}
+.tb.d{border-color:rgba(185,255,122,.95)}
+.tb.s{border-color:#fff;background:rgba(120,90,0,.55)}
+.tb.s.rdy{background:rgba(255,200,0,.75);animation:glow .5s infinite alternate}
+@keyframes glow{to{box-shadow:0 0 18px #ffd23f,0 3px 0 rgba(0,0,0,.6)}}
+.tb.wide{grid-column:span 2}
+.tb.dn{transform:scale(.92);background:rgba(255,210,63,.85);color:#2a0838;text-shadow:none}
+.tb.k.dn{background:rgba(126,240,255,.85)}
+.tb.d.dn{background:rgba(185,255,122,.85)}
+.tb.off{opacity:.38}
+#mashHint{position:fixed;left:50%;transform:translateX(-50%);z-index:16;pointer-events:none;display:none;font:900 calc(var(--fs)*1.2) 'Arial Black',Arial,sans-serif;color:#ffd23f;text-shadow:2px 2px 0 #000}
+</style>
+</head>
+<body>
+<canvas id="cv" width="320" height="240"></canvas>
+<div id="bub"></div>
+<div id="tc">
+  <div class="cl" id="tcL">
+    <div class="tb k" data-a="headKick"><i>🦵</i>HEAD<br>KICK</div>
+    <div class="tb k" data-a="roundhouse"><i>🌀</i>ROUND<br>HOUSE</div>
+    <div class="tb k" data-a="legKick"><i>🦶</i>LEG<br>KICK</div>
+    <div class="tb d" data-a="block"><i>🛡</i>BLOCK</div>
+    <div class="tb d" data-a="dodgeL"><i>◀</i>DODGE</div>
+    <div class="tb d" data-a="dodgeR"><i>▶</i>DODGE</div>
+    <div class="tb d wide" data-a="duck"><i>▼</i>DUCK</div>
+  </div>
+  <div class="cl" id="tcR">
+    <div class="tb s" data-a="star"><i>★</i>STAR</div>
+    <div class="tb" data-a="upper"><i>⤴</i>UPPER</div>
+    <div class="tb" data-a="hookL"><i>↰</i>L HOOK</div>
+    <div class="tb" data-a="hookR"><i>↱</i>R HOOK</div>
+    <div class="tb" data-a="bodyL"><i>↘</i>L BODY</div>
+    <div class="tb" data-a="bodyR"><i>↙</i>R BODY</div>
+    <div class="tb" data-a="jabL"><i>👊</i>L JAB</div>
+    <div class="tb" data-a="jabR"><i>👊</i>R JAB</div>
+  </div>
+</div>
+<div id="mashHint">TAP ANY BUTTON FAST!</div>
+<button class="topb" id="bPause" aria-label="Pause">II</button>
+<button class="topb" id="bMute" aria-label="Mute">♪</button>
+<div id="ui"></div>
+<script>
+"use strict";
